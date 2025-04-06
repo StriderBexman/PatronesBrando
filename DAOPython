@@ -1,0 +1,33 @@
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+Base = declarative_base()
+
+class Trabajador(Base):
+    __tablename__ = 'trabajadores'
+    id = Column(Integer, primary_key=True)
+    nombre = Column(String)
+    puesto = Column(String)
+
+class TrabajadorDAO:
+    def __init__(self, engine):
+        self.engine = engine
+        self.Session = sessionmaker(bind=engine)
+
+    def agregar_trabajador(self, trabajador):
+        session = self.Session()
+        session.add(trabajador)
+        session.commit()
+        
+if __name__ == '__main__':
+    # Crear la base de datos SQLite
+    engine = create_engine('sqlite:///trabajadores.db')
+    Base.metadata.create_all(engine)
+
+    # Crear un DAO y agregar un trabajador
+    dao = TrabajadorDAO(engine)
+    nuevo_trabajador = Trabajador(nombre="Juan Pérez", puesto="Desarrollador")
+    dao.agregar_trabajador(nuevo_trabajador)
+
+    print("Trabajador agregado exitosamente.")

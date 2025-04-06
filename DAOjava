@@ -1,0 +1,48 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class TrabajadorDAOImpl implements TrabajadorDAO {
+
+    private final String url = "jdbc:mysql://localhost:3306/mi_base_de_datos";
+    private final String user = "tu_usuario"; // Reemplaza con tu usuario de MySQL
+    private final String password = "tu_password"; // Reemplaza con tu contraseña de MySQL
+
+    @Override
+    public void agregarTrabajador(Trabajador trabajador) {
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String sql = "INSERT INTO trabajadores (id, nombre) VALUES (?, ?)";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, trabajador.getId());
+            ps.setString(2, trabajador.getNombre());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+// Interfaz TrabajadorDAO (opcional, pero recomendable)
+interface TrabajadorDAO {
+    void agregarTrabajador(Trabajador trabajador);
+}
+
+// Clase Trabajador (ejemplo)
+class Trabajador {
+    private int id;
+    private String nombre;
+
+    public Trabajador(int id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+}

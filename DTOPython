@@ -1,0 +1,39 @@
+from dataclasses import asdict, dataclass
+from typing import Optional
+
+@dataclass(frozen=False)  # frozen=True para inmutabilidad
+class UsuarioDTO:
+    nombre: str
+    email: str
+    edad: Optional[int] = None  # Campo opcional
+    activo: bool = True  # Valor por defecto
+
+    def __post_init__(self):
+        self.validar_email()
+        self.validar_edad()
+
+    def validar_email(self):
+        if "@" not in self.email:
+            raise ValueError("Email inválido: debe contener '@'")
+
+    def validar_edad(self):
+        if self.edad is not None and self.edad < 0:
+            raise ValueError("Edad no puede ser negativa")
+
+# Uso del DTO
+try:
+    usuario = UsuarioDTO(
+        nombre="Ana López",
+        email="ana@ejemplo.com",
+        edad=28
+    )
+
+    print("DTO como objeto:", usuario)
+    print("DTO a diccionario:", asdict(usuario))
+
+    # Modificación (si frozen=False)
+    usuario.activo = False
+    print("Estado actualizado:", usuario.activo)
+
+except ValueError as e:
+    print(f"Error de validación: {e}")
